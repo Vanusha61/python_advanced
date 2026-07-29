@@ -17,8 +17,11 @@ def decrypt(encryption: str) -> str:
 
     return ''.join(result)
 
-
-if __name__ == '__main__':
+def main():
+    """Только для ввода/вывода"""
     data: str = sys.stdin.read()
     decryption: str = decrypt(data)
     print(decryption)
+
+if __name__ == '__main__':
+    main()

@@ -1,28 +1,29 @@
+import datetime
 
 class Person:
     def __init__(self, name: str, year_of_birth: int, address: str = '') -> None:
-        self.name: str = name
-        self.yob: int = year_of_birth
-        self.address: str = address
+        self._name: str = name
+        self._yob: int = year_of_birth
+        self._address: str = address
 
     def get_age(self) -> int:
         now: datetime.datetime = datetime.datetime.now()
-        return self.yob - now.year
+        return now.year - self._yob
 
     def get_name(self) -> str:
-        return self.name
+        return self._name
 
     def set_name(self, name: str) -> None:
-        self.name = self.name
+        self._name = name
 
     def set_address(self, address: str) -> None:
-        self.address == address
+        self._address = address
 
     def get_address(self) -> str:
-        return self.address
+        return self._address
 
     def is_homeless(self) -> bool:
         '''
         returns True if address is not set, false in other case
         '''
-        return address is None
+        return self._address is None
