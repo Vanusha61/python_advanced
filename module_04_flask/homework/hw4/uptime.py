@@ -10,10 +10,14 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route("/uptime", methods=['GET'])
-def uptime() -> str:
-    ...
-
+@app.route('/uptime', methods=['GET'])
+def uptime():
+    try:
+        # uptime -p выводит "up X days, Y hours, Z minutes"
+        output = subprocess.check_output(['uptime', '-p'], text=True).strip()
+        return jsonify({"uptime": output}), 200
+    except Exception:
+        return "Error getting uptime", 500
 
 if __name__ == '__main__':
     app.run(debug=True)
