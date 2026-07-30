@@ -8,7 +8,11 @@
 /ps?arg=a&arg=u&arg=x
 """
 
+import html
+import subprocess
+
 from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -23,7 +27,8 @@ def ps():
     output = result.stdout
     if result.stderr:
         output += "\n" + result.stderr
-    return f"<pre>{output}</pre>", 200
+    escaped_output = html.escape(output)
+    return f"<pre>{escaped_output}</pre>", 200
 
 
 if __name__ == "__main__":
