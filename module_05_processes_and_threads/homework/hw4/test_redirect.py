@@ -73,4 +73,3 @@ class TestRedirect(TestCase):
         """Проверяем, что traceback пишется в stderr при исключении."""
         with Redirect(file_stderr=self.file_stderr):
             raise ValueError('Test error')
-

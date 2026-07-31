@@ -18,3 +18,4 @@ class BlockErrors:
         if exc_type in self.error or Exception in self.error:
             return True
         return False
+

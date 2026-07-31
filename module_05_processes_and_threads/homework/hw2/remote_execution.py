@@ -62,6 +62,8 @@ def subprocess_api():
         return {"error": f"Ошибка выполнения: {str(e)}"}, 500
 
 
+
+
 if __name__ == "__main__":
     app.config['WTF_CSRF_ENABLED'] = False
     app.run(port=5000)

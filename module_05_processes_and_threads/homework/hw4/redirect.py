@@ -32,3 +32,4 @@ class Redirect:
         sys.stdout = self.old_stdout
         sys.stderr = self.old_stderr
         return True
+
