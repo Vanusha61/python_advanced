@@ -1,7 +1,7 @@
 import unittest
 from redirect import Redirect
 
-class TestRedirect(TestCase):
+class TestWitPotok(TestCase):
     def setUp(self):
         self.file_stdout = open('test_stdout.txt', 'w', encoding='utf-8')
         self.file_stderr = open('test_stderr.txt', 'w', encoding='utf-8')
@@ -18,7 +18,7 @@ class TestRedirect(TestCase):
         """Перенаправление обоих потоков."""
         with Redirect(file_stdout=self.file_stdout, file_stderr=self.file_stderr):
             print('Hello stdout')
-            sys.stderr.write('Hello stderr\n')
+            raise Exception('Hello stderr')
 
         self.file_stdout.close()
         self.file_stderr.close()
@@ -27,7 +27,9 @@ class TestRedirect(TestCase):
             stdout_content = f.read()
         with open('test_stderr.txt', 'r', encoding='utf-8') as f:
             stderr_content = f.read()
-        self.assertEqual(stderr_content, "Hello stderr\n")
+        print(stdout_content)
+        print(stderr_content)
+        self.assertIn("Hello stderr\n",stderr_content)
         self.assertEqual(stdout_content, "Hello stdout\n")
 
     def test_redirect_stdout_only(self):
@@ -36,11 +38,11 @@ class TestRedirect(TestCase):
 
         with Redirect(file_stdout=self.file_stdout):
             print('Hello stdout')
-            sys.stderr.write('Hello stderr\n')
+            raise Exception('Hello stderr')
         self.file_stdout.close()
         with open('test_stdout.txt', 'r', encoding='utf-8') as f:
             stdout_content = f.read()
-            self.assertEqual(stdout_content, "Hello stdout\n")
+            self.assertIn("Hello stdout\n", stdout_content)
 
         self.assertIs(original_stderr, sys.stderr)
 
@@ -49,12 +51,12 @@ class TestRedirect(TestCase):
         original_stdout = sys.stdout
 
         with Redirect(file_stderr=self.file_stderr):
-            sys.stderr.write('Hello stderr\n')
+            raise Exception('Hello stderr')
 
         self.file_stderr.close()
         with open('test_stderr.txt', 'r', encoding='utf-8') as f:
             stderr_content = f.read()
-            self.assertEqual(stderr_content, "Hello stderr\n")
+            self.assertIn("Hello stderr\n", stderr_content)
         self.assertIs(original_stdout, sys.stdout)
 
     def test_restore_streams(self):
@@ -64,7 +66,7 @@ class TestRedirect(TestCase):
 
         with Redirect(file_stdout=self.file_stdout, file_stderr=self.file_stderr):
             print('Hello stdout')
-            sys.stderr.write('Hello stderr\n')
+            raise Exception('Hello stderr')
 
         self.assertIs(old_stdout, sys.stdout)
         self.assertIs(old_stderr, sys.stderr)
@@ -73,3 +75,9 @@ class TestRedirect(TestCase):
         """Проверяем, что traceback пишется в stderr при исключении."""
         with Redirect(file_stderr=self.file_stderr):
             raise ValueError('Test error')
+
+        self.file_stderr.close()
+        with open('test_stderr.txt', 'r', encoding='utf-8') as f:
+            stderr_content = f.read()
+            self.assertIn("ValueError('Test error')", stderr_content)
+
