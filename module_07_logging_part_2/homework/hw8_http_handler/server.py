@@ -1,26 +1,20 @@
-import json
-from flask import Flask, request
-
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-
+logs = []  # хранилище логов (в памяти)
 
 @app.route('/log', methods=['POST'])
-def log():
-    """
-    Записываем полученные логи которые пришли к нам на сервер
-    return: текстовое сообщение об успешной записи, статус код успешной работы
+def add_log():
+    """Принимает лог от HTTPHandler и сохраняет его."""
+    log_data = request.form.to_dict()  # или просто request.form
+    logs.append(log_data)
+    print("Received log:", log_data)
+    return 'OK', 200
 
-    """
-    ...
+@app.route('/log', methods=['GET'])
+def get_logs():
+    """Возвращает все сохранённые логи в формате JSON."""
+    return jsonify(logs), 200
 
-
-@app.route('/logs', methods=['GET'])
-def logs():
-    """
-    Рендерим список полученных логов
-    return: список логов обернутый в тег HTML <pre></pre>
-    """
-    ...
-
-# TODO запустить сервер
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=3000, debug=True)
