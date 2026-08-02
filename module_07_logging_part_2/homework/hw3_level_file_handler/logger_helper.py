@@ -6,19 +6,16 @@ from module_07_logging_part_2.homework.hw4_dict_config.logger_config import dict
 
 
 class LevelFileHandler(logging.Handler):
-    def __init__(self):
+    def __init__(self, base_name: str = "log"):
         super().__init__()
-        self.file_name = None
+        self.base_name = base_name
 
     def emit(self, record: logging.LogRecord):
         msg = self.format(record)
-        if record.levelno == logging.DEBUG:
-            self.file_name = "calc_debug.log"
-        elif record.levelno == logging.ERROR:
-            self.file_name = "calc_error.log"
-        with open(self.file_name, mode='a') as f:
-            f.write(msg)
-
+        lvl = record.levelname.lower()
+        file_name = f"{self.base_name}_{lvl}.log"
+        with open(file_name, "w") as f:
+            f.write(msg + "\n")
 
 
 
