@@ -1,0 +1,6 @@
+https://hub.docker.com/repository/docker/vanyavanya/homework_9.6
+# Скачиваем образ
+docker pull vanyavanya/homework_9.6:latest
+
+# Запускаем контейнер с пробросом порта 5050 → 80
+docker run -d -p 5050:80 --name my-app vanyavanya/homework_9.6:latest
