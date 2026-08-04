@@ -7,6 +7,7 @@ from typing import List
 from threading import Lock
 
 TOTAL_TICKETS: int = 10
+MAX_TICKETS = 100
 lock = Lock()
 
 logging.basicConfig(level=logging.INFO)
@@ -42,7 +43,12 @@ class Seller(threading.Thread):
 
     def director(self):
         global TOTAL_TICKETS
-        TOTAL_TICKETS += 9
+        global MAX_TICKETS
+        if MAX_TICKETS <= 0:
+            return f"Билеты закончились"
+        counts = min(9, MAX_TICKETS)
+        TOTAL_TICKETS += counts
+        MAX_TICKETS -= counts
 
 
 def main() -> None:
