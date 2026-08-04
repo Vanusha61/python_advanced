@@ -4,7 +4,11 @@ import threading
 import time
 from typing import List
 
+from threading import Lock
+
 TOTAL_TICKETS: int = 10
+MAX_TICKETS = 100
+lock = Lock()
 
 logging.basicConfig(level=logging.INFO)
 logger: logging.Logger = logging.getLogger(__name__)
@@ -24,19 +28,31 @@ class Seller(threading.Thread):
         while is_running:
             self.random_sleep()
             with self.sem:
-                if TOTAL_TICKETS <= 0:
-                    break
-                self.tickets_sold += 1
-                TOTAL_TICKETS -= 1
-                logger.info(f'{self.name} sold one;  {TOTAL_TICKETS} left')
+                with lock:
+                    if TOTAL_TICKETS <= 0:
+                        break
+                    self.tickets_sold += 1
+                    TOTAL_TICKETS -= 1
+                    logger.info(f'{self.name} sold one;  {TOTAL_TICKETS} left')
+                    if TOTAL_TICKETS <= 3:
+                        self.director()
         logger.info(f'Seller {self.name} sold {self.tickets_sold} tickets')
 
     def random_sleep(self) -> None:
         time.sleep(random.randint(0, 1))
 
+    def director(self):
+        global TOTAL_TICKETS
+        global MAX_TICKETS
+        if MAX_TICKETS <= 0:
+            return f"Билеты закончились"
+        counts = min(9, MAX_TICKETS)
+        TOTAL_TICKETS += counts
+        MAX_TICKETS -= counts
+
 
 def main() -> None:
-    semaphore: threading.Semaphore = threading.Semaphore()
+    semaphore: threading.Semaphore = threading.Semaphore(3)
     sellers: List[Seller] = []
     for _ in range(4):
         seller = Seller(semaphore)
