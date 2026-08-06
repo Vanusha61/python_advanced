@@ -50,7 +50,7 @@ def get_books_form() -> Response | str:
         return redirect(url_for('all_books'))
     return render_template('add_book.html', form=form)
 
-@app.route('/author/books', methods=['GET'])
+@app.route('/books/author', methods=['GET'])
 def get_author_books():
     author_name = request.args.get('author_name')
     books = None
@@ -58,7 +58,7 @@ def get_author_books():
         books = author_all_books(author_name)
     return render_template('author_books.html', books=books, author_name=author_name)
 
-@app.route("/book/id", methods=['GET'])
+@app.route("/books/id", methods=['GET'])
 def get_book():
     book_id = request.args.get('book_id')
     if book_id:

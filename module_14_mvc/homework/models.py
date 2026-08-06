@@ -62,6 +62,11 @@ def get_all_books() -> List[Book]:
             SELECT * from `table_books`
             """
         )
+        ids = [row[0] for row in cursor.fetchall()]
+        if ids:
+            placeholders = ','.join('?' for _ in ids)
+            cursor.execute(f"UPDATE table_books SET views_count = views_count + 1 WHERE id IN ({placeholders})", ids)
+            conn.commit()
         return [Book(*row) for row in cursor.fetchall()]
 
 def add_book(title: str, author: str) -> None:
@@ -84,7 +89,11 @@ def author_all_books(author_name: str) -> List[str]:
             """, (author_name, )
         )
         res = cursor.fetchall()
-        return [l[1] for l in res]
+        result_lines = []
+        for r in res:
+            line = f"id: {r[0]}, title: {r[1]}, author: {r[2]}, views_count: {r[3]}"
+            result_lines.append(line)
+        return result_lines
 
 
 def add_row() -> None:
@@ -117,5 +126,4 @@ def add_views_count(book_id: int):
             return None
         res = "id: {}, title: {}, author: {}, views_count: {}"
         return res.format(result[0], result[1], result[2], result[3])
-
 
