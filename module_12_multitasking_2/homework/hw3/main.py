@@ -1,39 +1,32 @@
-from threading import Semaphore, Thread, Event
+from threading import Semaphore, Thread
 import time
 
-sem = Semaphore()
-stop_event = Event()
+sem: Semaphore = Semaphore()
 
 
 def fun1():
-    while not stop_event.is_set():
-
-        if sem.acquire(timeout=0.1):
-            print(1)
-            sem.release()
+    while True:
+        sem.acquire()
+        print(1)
+        sem.release()
         time.sleep(0.25)
 
 
 def fun2():
-    while not stop_event.is_set():
-        if sem.acquire(timeout=0.1):
-            print(2)
-            sem.release()
+    while True:
+        sem.acquire()
+        print(2)
+        sem.release()
         time.sleep(0.25)
 
 
-t1 = Thread(target=fun1)
-t2 = Thread(target=fun2)
-
+t1: Thread = Thread(target=fun1, daemon=True)
+t2: Thread = Thread(target=fun2, daemon=True)
 try:
     t1.start()
     t2.start()
-
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    print('\nReceived keyboard interrupt, quitting threads.')
-    stop_event.set()
     t1.join()
     t2.join()
-    print('Threads finished.')
+except KeyboardInterrupt:
+    print('\nReceived keyboard interrupt, quitting threads.')
+    exit(1)
