@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-style-10">
+    <h1>Book title<span>Add views_count</span></h1>
+    <form action="/book/id" method="get">
+        <div class="section"><span>1</span>Book id</div>
+        <div class="inner-wrap">
+            <label>Book id<input type="text" name="book_id"/></label>
+        </div>
+        <div class="button-section">
+            <input type="submit" value="Найти"/>
+        </div>
+    </form>
+    {% if book_id %}
+        {% if book %}
+        <h2>Книга {{ book }}</h2>
+        {% else %}
+        <h2>С таким id нет книги в DB</h2>
+        <form action="/books" method="get"></form>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

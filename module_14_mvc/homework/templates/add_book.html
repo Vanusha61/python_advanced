@@ -7,11 +7,25 @@
         <div class="section"><span>1</span>Book title</div>
         <div class="inner-wrap">
             <label>Book title<input type="text" name="book_title"/></label>
+            {% if form.book_title.errors %}
+            <ul style="color: red;">
+                {% for error in form.book_title.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         </div>
 
         <div class="section"><span>2</span>Author full name</div>
         <div class="inner-wrap">
             <label>Author full name<input type="text" name="author_name"/></label>
+            {% if form.author_name.errors %}
+            <ul style="color: red;">
+                {% for error in form.author_name.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         </div>
 
         <div class="button-section">
