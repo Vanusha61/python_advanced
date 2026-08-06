@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-style-10">
+    <h1>Author name<span>Full books in author</span></h1>
+    <form action="/books/author" method="get">
+        <div class="section"><span>1</span>Author name</div>
+        <div class="inner-wrap">
+            <label>Author name<input type="text" name="author_name"/></label>
+        </div>
+        <div class="button-section">
+            <input type="submit" value="Найти"/>
+        </div>
+    </form>
+
+    {% if author_name %}
+        {% if books %}
+        <h2>Книги автора {{ author_name }}</h2>
+        <ul>
+            {% for book in books %}
+            <li>{{ book }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>У этого автора нет книг.</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
