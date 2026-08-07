@@ -2,7 +2,37 @@ import sqlite3
 from typing import Any
 
 from module_05_processes_and_threads.homework.hw5_add.self_printing import result
+def init_db():
+    """Создаёт таблицы room и booking, если они не существуют."""
+    with sqlite3.connect("database.db") as conn:
+        conn.execute("PRAGMA foreign_keys = ON")
+        cursor = conn.cursor()
 
+        # Таблица комнат
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS room (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                floor INTEGER,
+                beds INTEGER,
+                guest_num INTEGER,
+                price INTEGER
+            )
+        ''')
+
+        # Таблица бронирований
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS booking (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                room_id INTEGER,
+                check_in TEXT,
+                check_out TEXT,
+                first_name TEXT,
+                last_name TEXT,
+                FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE CASCADE
+            )
+        ''')
+
+        conn.commit()
 
 def add_room(floor: int, beds: int, guest_num: int, price: int) -> None:
     with sqlite3.connect("database.db") as coon:
