@@ -223,3 +223,16 @@ def delete_author_by_id(author_id: int) -> None:
             """, (author_id,)
         )
         conn.commit()
+
+def get_author_by_id(author_id: int) -> Author | None:
+    with sqlite3.connect(DATABASE_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            f"""
+            SELECT * FROM `{AUTHORS_TABLE_NAME}` WHERE id = ?
+            """, (author_id,)
+        )
+        res = cursor.fetchone()
+        if res:
+            return _get_author_obj_from_row(res)
+        return None

@@ -13,7 +13,10 @@ from models import (
     get_all_authors,
     add_author,
     get_author_all_book_by_id,
-    delete_author_by_id
+    delete_author_by_id,
+    get_author_by_id,
+    Author,
+    Book
 )
 
 from schemas import BookSchema, BookIdSchemaResponse, BookPutSchema, AuthorResponseSchema, AuthorSchema
@@ -30,23 +33,37 @@ class BookList(Resource):
     def post(self) -> tuple[dict, int]:
         data = request.json
         schema = BookSchema()
+        author_data = data['author']
+        if author_data.get('id') is not None:
+            res = get_author_by_id(author_data['id'])
+            if not res:
+                return {'message': 'Author not found'}, 404
+            data['author_id'] = res.id
+        elif author_data.get('first_name') is not None and author_data.get('last_name') is not None:
+            new_author = Author(
+                first_name=author_data.get('first_name'),
+                last_name=author_data.get('last_name'),
+                middle_name=author_data.get('middle_name'),
+            )
+            res = add_author(new_author)
+            data['author_id'] = res.id
         try:
             book = schema.load(data)
         except ValidationError as exc:
             return exc.messages, 400
-
         book = add_book(book)
         return schema.dump(book), 201
 
-    def put(self):
-        data = request.json
-        schema = BookPutSchema()
-        try:
-            book = schema.load(data)
-        except ValidationError as exc:
-            return exc.messages, 400
-        update_book_by_id(book)
-        return schema.dump(book), 200
+def put(self):
+    data = request.json
+    schema = BookPutSchema()
+    try:
+        book = schema.load(data)
+    except ValidationError as exc:
+        return exc.messages, 400
+    update_book_by_id(book)
+    return schema.dump(book), 200
+
 
 class BookItem(Resource):
     def get(self, book_id: int | None):
@@ -61,6 +78,7 @@ class BookItem(Resource):
             return {'message': 'Author not found'}, 404
         delete_book_by_id(book_id)
         return {"response": "Книга с id {} успешно удалена".format(book_id)}, 200
+
 
 class Author(Resource):
     def get(self):
@@ -77,6 +95,7 @@ class Author(Resource):
         res = add_author(author)
         return schema.dump(res), 201
 
+
 class AuthorItem(Resource):
 
     def get(self, author_id: int | None):
@@ -91,6 +110,7 @@ class AuthorItem(Resource):
             return {'message': 'Author not found'}, 404
         delete_author_by_id(author_id)
         return {"response": "Автор с id {} успешно удален".format(author_id)}, 200
+
 
 api.add_resource(BookList, '/api/books')
 api.add_resource(BookItem, '/api/books/<int:book_id>')
