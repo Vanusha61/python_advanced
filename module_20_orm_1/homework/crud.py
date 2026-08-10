@@ -15,8 +15,7 @@ def crud_get_all_books() -> List[Book]:
 def crud_get_all_debtors_students() -> List[Student]:
     with Session() as session:
         students = session.query(Student).join(ReceivingBooks, Student.id == ReceivingBooks.student_id).filter(
-            ReceivingBooks.date_of_return.is_(None),
-            (func.julianday('now') - func.julianday(ReceivingBooks.date_of_issue)) > 14).all()
+            ReceivingBooks.date_of_return.is_(None), (ReceivingBooks.count_date_with_book > 14)).all()
         return students
 
 def crud_post_to_give_book(student_id: int, book_id: int):

@@ -3,11 +3,10 @@ from sqlalchemy import (
     Column,
     Text,
     Integer,
-    Date, Float, Boolean, DateTime)
+    Date, Float, Boolean, DateTime, func, case)
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
-
 engine = create_engine('sqlite:///database.db')
 Session = sessionmaker(bind=engine)
 
@@ -66,8 +65,18 @@ class ReceivingBooks(Base):
 
     @hybrid_property
     def count_date_with_book(self):
+        # Python-вычисление для экземпляров
         if self.date_of_return is None:
             delta = datetime.now() - self.date_of_issue
         else:
             delta = self.date_of_return - self.date_of_issue
         return delta.days
+
+    @count_date_with_book.expression
+    def count_date_with_book(cls):
+        # SQL-выражение для использования в запросах
+        end_date = case(
+            (cls.date_of_return != None, cls.date_of_return),
+            else_=func.now()
+        )
+        return func.julianday(end_date) - func.julianday(cls.date_of_issue)
