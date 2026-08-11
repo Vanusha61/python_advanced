@@ -3,7 +3,7 @@
 """
 from flask import Flask, jsonify, request
 from celery import Celery, group
-from tasks import blur_image_task, celery, r
+from tasks import blur_image_task, celery, r, send_result_task
 import os
 
 
@@ -13,6 +13,7 @@ app = Flask(__name__)
 @app.route("/blur", methods=["POST"])
 def blur():
     images = request.files.getlist("image")
+    email = request.form.get("email")
     list_images = []
     if images:
         count_image = 1
@@ -27,7 +28,7 @@ def blur():
             blur_image_task.s(image) for image in list_images
         )
         # Запускаем группу задач и сохраняем её
-        result = task_group.apply_async()
+        result = task_group.apply_async(link=send_result_task.s(email=email))
         result.save()
 
         return jsonify({"group_id": result.id}), 202
