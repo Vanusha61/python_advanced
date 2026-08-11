@@ -19,3 +19,4 @@ def blur_image(src_filename: str, dst_filename: Optional[str] = None):
         img.load()
         new_img = img.filter(ImageFilter.GaussianBlur(5))
         new_img.save(dst_filename)
+    return dst_filename
