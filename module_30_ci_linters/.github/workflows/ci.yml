@@ -1,43 +1,39 @@
-name: CI
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "develop"
 
-on:
-  push:
-    branches: [ master, develop ]
-  pull_request:
-    branches: [ master ]
+image: python:3.11
 
-jobs:
-  lint-and-test:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: module_30_ci_linters   # все команды выполняются внутри этой папки
+stages:
+  - test
 
-    steps:
-      - uses: actions/checkout@v4
+before_script:
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+# Все команды выполняются из корня репозитория, поэтому пути указываем полные
+unittest:
+  stage: test
+  script:
+    - pytest module_30_ci_linters/homework/hw1/test -v
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install black isort flake8 mypy pytest factory-boy Faker Flask Flask-SQLAlchemy
+mypy:
+  stage: test
+  script:
+    - mypy module_30_ci_linters/homework
 
-      - name: Check formatting with Black
-        run: black --check --diff homework   # теперь путь относительный от module_30_ci_linters
+black:
+  stage: test
+  script:
+    - black --check --diff module_30_ci_linters/homework
 
-      - name: Check import sorting with isort
-        run: isort --check-only --diff --profile black homework
+isort:
+  stage: test
+  script:
+    - isort --check-only --diff --profile black module_30_ci_linters/homework
 
-      - name: Lint with flake8
-        run: flake8 homework
-
-      - name: Type check with mypy
-        run: mypy homework
-
-      - name: Run tests
-        run: pytest homework/hw1/test -v
+flake8:
+  stage: test
+  script:
+    - flake8 module_30_ci_linters/homework
