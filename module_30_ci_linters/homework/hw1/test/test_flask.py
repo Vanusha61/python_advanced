@@ -6,7 +6,7 @@ import pytest
 @pytest.mark.parametrize("route", ["/clients", "/clients/1"])
 def test_all_get_good_200(client, route):
     response = client.get(route)
-    assert response.status_code == 203
+    assert response.status_code == 201
 
 
 def test_create_good_client_201(client):
