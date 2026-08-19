@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 
+from pytest import fixture
+
 from module_30_ci_linters.homework.hw1 import create_app
 from module_30_ci_linters.homework.hw1.model import Client, ClientParking, Parking
 from module_30_ci_linters.homework.hw1.model import db as _db
-from pytest import fixture
 
 
 @fixture

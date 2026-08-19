@@ -10,28 +10,32 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: module_30_ci_linters
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install black isort flake8 mypy pytest factory-boy Faker Flask Flask-SQLAlchemy
+
       - name: Check formatting with Black
-        run: black --check --diff homework
+        run: black --check --diff module_30_ci_linters/homework
+
       - name: Check import sorting with isort
-        run: isort --check-only --diff --profile black homework
+        run: isort --check-only --diff --profile black module_30_ci_linters/homework
+
       - name: Lint with flake8
-        run: flake8 homework
+        run: flake8 module_30_ci_linters/homework
+
       - name: Type check with mypy
-        run: mypy homework
+        run: mypy module_30_ci_linters/homework
+
       - name: Run tests
-        run: pytest homework/hw1/test -v
+        run: pytest module_30_ci_linters/homework/hw1/test -v
