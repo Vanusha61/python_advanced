@@ -9,6 +9,9 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: module_30_ci_linters   # все команды выполняются внутри этой папки
 
     steps:
       - uses: actions/checkout@v4
@@ -25,16 +28,16 @@ jobs:
           pip install black isort flake8 mypy pytest factory-boy Faker Flask Flask-SQLAlchemy
 
       - name: Check formatting with Black
-        run: black --check --diff module_30_ci_linters/homework
+        run: black --check --diff homework   # теперь путь относительный от module_30_ci_linters
 
       - name: Check import sorting with isort
-        run: isort --check-only --diff --profile black module_30_ci_linters/homework
+        run: isort --check-only --diff --profile black homework
 
       - name: Lint with flake8
-        run: flake8 module_30_ci_linters/homework
+        run: flake8 homework
 
       - name: Type check with mypy
-        run: mypy module_30_ci_linters/homework
+        run: mypy homework
 
       - name: Run tests
-        run: pytest module_30_ci_linters/homework/hw1/test -v
+        run: pytest homework/hw1/test -v
