@@ -1,0 +1,5 @@
+[flake8]
+exclude = .venv,.git,__pycache__,migrations/versions
+max-line-length = 120
+per-file-ignores =
+    migrations/env.py: E402,F401
